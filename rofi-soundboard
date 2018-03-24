@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+SND_HOME=${SND_HOME:-"$HOME/ownCloud/sync/snd"}
+STOP_KEY="Control+c"
+PLAY__5S="Alt+1"
+PLAY_10S="Alt+2"
+PLAY_30S="Alt+3"
+
+snd="$(find "$SND_HOME" -type f -printf '%f\n' | \
+    sort -nr | \
+    rofi -i -mesg "Select file. ${STOP_KEY} to stop" \
+        -dmenu \
+        -kb-custom-1  "${STOP_KEY}" \
+        -kb-custom-11 "${PLAY__5S}" \
+        -kb-custom-12 "${PLAY_10S}" \
+        -kb-custom-13 "${PLAY_30S}" \
+        -p "play: ")"
+rofi_exit=$?
+
+if [[ $rofi_exit -eq 0 ]]; then
+    cvlc "$SND_HOME/$snd" &
+elif [[ $rofi_exit -eq 10 ]]; then
+    pkill -f "vlc .* $SND_HOME"
+elif [[ $rofi_exit -eq 20 ]]; then
+    timeout 5 cvlc "$SND_HOME/$snd" &
+elif [[ $rofi_exit -eq 21 ]]; then
+    timeout 10 cvlc "$SND_HOME/$snd" &
+elif [[ $rofi_exit -eq 22 ]]; then
+    timeout 30 cvlc "$SND_HOME/$snd" &
+else
+    exit
+fi
