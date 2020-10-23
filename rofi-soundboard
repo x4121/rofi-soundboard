@@ -5,21 +5,27 @@ PLAY__5S="Alt+1"
 PLAY_10S="Alt+2"
 PLAY_30S="Alt+3"
 STOP_KEY="Control+c"
+MESG=$(cat <<-END
+	Select audio file. ${STOP_KEY} to stop currently playing audio file.
+	"${PLAY__5S}, ${PLAY_10S} or ${PLAY_30S} to play 5, 10 or 30 seconds.
+END
+)
 
 snd="$(find "$SND_HOME" -type f -printf '%f\n' | \
     sort -nr | \
-    rofi -i -mesg "Select file. ${STOP_KEY} to stop\\nTest" \
+    rofi -i \
+        -mesg "$MESG" \
         -dmenu \
         -kb-custom-1  "${PLAY__5S}" \
         -kb-custom-2  "${PLAY_10S}" \
         -kb-custom-3  "${PLAY_30S}" \
         -kb-custom-10 "${STOP_KEY}" \
-        -p "play: ")"
+        -p "play")"
 rofi_exit=$?
 
 if [[ $rofi_exit -eq 0 ]]; then
     cvlc "$SND_HOME/$snd" &
-elif [[ $rofi_exit -eq 20 ]]; then
+elif [[ $rofi_exit -eq 19 ]]; then
     pkill -f "vlc .* $SND_HOME"
 elif [[ $rofi_exit -eq 10 ]]; then
     timeout 5 cvlc "$SND_HOME/$snd" &
