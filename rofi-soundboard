@@ -7,7 +7,7 @@ PLAY_30S="Alt+3"
 STOP_KEY="Control+c"
 MESG=$(cat <<-END
 	Select audio file. ${STOP_KEY} to stop currently playing audio file.
-	"${PLAY__5S}, ${PLAY_10S} or ${PLAY_30S} to play 5, 10 or 30 seconds.
+	${PLAY__5S}, ${PLAY_10S} or ${PLAY_30S} to play 5, 10 or 30 seconds.
 END
 )
 
